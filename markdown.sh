@@ -8,8 +8,36 @@ cat << THE_END
 <body>
 THE_END
 
-while read LINE
-do
+ZOZ=()
+
+while IFS= read LINE
+do  
+
+    if echo "$LINE" | grep '[^<]*<\(https://[^ ]*\)>' > /dev/null
+    then 
+        LINE=$(echo "$LINE" | sed 's@\([^<]*\)<\(https://[^>]*\)>@\1<a href="\2">\2</a>@g')
+        echo "$LINE"
+        continue;
+    fi
+    
+    if echo "$LINE" | grep ' - ' > /dev/null
+    then 
+        if test "$ZOZ" = 0
+        then
+            echo '<ul>''\n'
+        fi
+
+        LINE=$(echo "$LINE" | sed 's@ - @<li>@')
+        echo "$LINE"'</li>'
+        continue;
+    fi
+    
+    if test "$ZOZ" = 0
+    then
+        echo '</ul>'
+        continue;
+    fi
+
     if echo "$LINE" | grep '^[[:space:]]*$' > /dev/null
     then 
         LINE=$(echo "$LINE" | sed 's@^[[:space:]]*$@@')
@@ -46,7 +74,7 @@ do
     fi
 
     echo "$LINE"
-
+ 
 done
 
 cat << THE_END
