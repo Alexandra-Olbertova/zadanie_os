@@ -8,7 +8,7 @@ cat << THE_END
 <body>
 THE_END
 
-ZOZ=()
+ZOZ=0
 
 while IFS= read LINE
 do  
@@ -24,7 +24,8 @@ do
     then 
         if test "$ZOZ" = 0
         then
-            echo '<ul>''\n'
+            echo '<ul>'
+	    ZOZ=1
         fi
 
         LINE=$(echo "$LINE" | sed 's@ - @<li>@')
@@ -32,10 +33,10 @@ do
         continue;
     fi
     
-    if test "$ZOZ" = 0
+    if test "$ZOZ" = 1
     then
+    	ZOZ=0
         echo '</ul>'
-        continue;
     fi
 
     if echo "$LINE" | grep '^[[:space:]]*$' > /dev/null
